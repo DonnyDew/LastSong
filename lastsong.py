@@ -22,7 +22,6 @@ def getDF(playlist_link):
     auth_manager = SpotifyClientCredentials()
     sp = spotipy.Spotify(auth=token,auth_manager=auth_manager)
 
-    
     playlist_URI = playlist_link.split("/")[-1].split("?")[0]
     df = []
     tracks_in_playlist = 0
@@ -30,15 +29,16 @@ def getDF(playlist_link):
         track_uri = track["track"]["uri"]
         track_info = sp.track(track_uri)
         album_type = track_info['album']['album_type'] 
+        
         if album_type == "album":
             tracks_in_playlist += 1
             track_name = track["track"]["name"] #
-            track_pop = track_info['popularity']
             track_num = track_info["track_number"]
             album = track["track"]["album"]["name"] #
             total_tracks = track_info['album']['total_tracks']
+            albumID = track_info['album']['id']
             isLast = 0
-            if track_num == total_tracks:
+            if track_name == find_last_song(albumID):
                 isLast = 1
             
             track_artists = track_info['artists'] 
@@ -63,14 +63,12 @@ def getDF(playlist_link):
             'TotalTracks': [],
             'TracksInAlbum': [],
             }
-
+    
     # iterate over each unique album in the original DataFrame
     for album_name in df['AlbumName'].unique():
         # select only the rows corresponding to the current album
         album_df = df[df['AlbumName'] == album_name]
 
-        # concatenate the track names into a single string
-        track_names = ', '.join(album_df['TrackName'].tolist())
 
         # determine the artist names and total tracks for the album
         artist_names = album_df['ArtistNames'].iloc[0]
@@ -92,17 +90,20 @@ def getDF(playlist_link):
         # create a new DataFrame from the dictionary and return it
     return pd.DataFrame(data),tracks_in_playlist
 
+def find_last_song(album_id):
+    auth_manager = SpotifyClientCredentials()
+    sp = spotipy.Spotify(auth_manager=auth_manager)
 
-
+    album = sp.album(album_id)
+    tracks = album['tracks']['items']
+    last_track = tracks[-1]
+    return last_track['name']
 def calculateProb(df,tracks_in_playlist):
     num_last_tracks = sum(df['IsLast'] == 1)
     prop_last_tracks = num_last_tracks / tracks_in_playlist
     
     df["isLast"] = df["TracksInAlbum"] / df["TotalTracks"]
-    chanceLast = df["isLast"].mean()
-   
-    total_tracks_in_albums = df['TracksInAlbum'].sum()
-    prob_last_tracks = (chanceLast * total_tracks_in_albums) / tracks_in_playlist
+    prob_last_tracks = df["isLast"].mean()
     return f"The proportion of last tracks is {prop_last_tracks*100:.2f}% compared to the expected of {prob_last_tracks*100:.2f}%"
     
 
