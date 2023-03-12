@@ -1,5 +1,5 @@
 # Playlist Processor
-This Python script analyzes a Spotify playlist and determines the proportion of "last tracks" in the playlist compared to the expected proportion based on the artists' album lengths.
+This Python script analyzes a Spotify playlist and determines the proportion of songs that are last in an album within the playlist compared to the expected proportion based on the artists' album lengths.
 
 ## Requirements
 The following packages are required to run the script:
