@@ -6,19 +6,9 @@ import pandas as pd
 
 
 def getDF(playlist_link):
-    SPOTIPY_CLIENT_ID = str(os.environ.get('SPOTIPY_CLIENT_ID'))
-    SPOTIPY_CLIENT_SECRET = str(os.environ.get('SPOTIPY_CLIENT_SECRET'))
-    SPOTIPY_REDIRECT_URI = str(os.environ.get('SPOTIPY_REDIRECT_URI'))
-
-    os.environ['SPOTIPY_CLIENT_ID'] = SPOTIPY_CLIENT_ID
-    os.environ['SPOTIPY_CLIENT_SECRET'] = SPOTIPY_CLIENT_SECRET
-    os.environ['SPOTIPY_REDIRECT_URI'] = SPOTIPY_REDIRECT_URI
-
     scope = "user-library-read"
     user = os.environ.get('SPOT_USER') #Environmental variable is set up
-
     token = util.prompt_for_user_token(user, scope)
-
     auth_manager = SpotifyClientCredentials()
     sp = spotipy.Spotify(auth=token,auth_manager=auth_manager)
 
@@ -48,7 +38,6 @@ def getDF(playlist_link):
                     artist_names = artist_names + "," + track_artists[i]["name"]
             else:
                 artist_names =  track_info['artists'][0]["name"] 
-            
             
             track_dict = {"TrackName":track_name,"TrackNum":track_num,
                         "ArtistNames":artist_names,"TotalTracks":total_tracks,"IsLast":isLast,
