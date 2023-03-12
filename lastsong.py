@@ -15,6 +15,7 @@ def getDF(playlist_link):
     playlist_URI = playlist_link.split("/")[-1].split("?")[0]
     df = []
     tracks_in_playlist = 0
+    album_last_songs = {} # initialize dictionary to store last song names for each album
     for track in sp.playlist_tracks(playlist_URI)["items"]:
         track_uri = track["track"]["uri"]
         track_info = sp.track(track_uri)
@@ -27,27 +28,23 @@ def getDF(playlist_link):
             album = track["track"]["album"]["name"] #
             total_tracks = track_info['album']['total_tracks']
             albumID = track_info['album']['id']
-            isLast = 0
-            if track_name == find_last_song(albumID):
-                isLast = 1
             
-            track_artists = track_info['artists'] 
-            
-            if (len(track_artists) > 1):
-                for i in range(1,len(track_artists)):
-                    artist_names = artist_names + "," + track_artists[i]["name"]
+            if albumID in album_last_songs:
+                last_song = album_last_songs[albumID] # retrieve last song name from dictionary
+                isLast = int(track_name == last_song)
             else:
-                artist_names =  track_info['artists'][0]["name"] 
+                last_song = find_last_song(albumID)
+                album_last_songs[albumID] = last_song # add album ID and last song name to dictionary
+                isLast = int(track_name == last_song)
             
             track_dict = {"TrackName":track_name,"TrackNum":track_num,
-                        "ArtistNames":artist_names,"TotalTracks":total_tracks,"IsLast":isLast,
+                        "TotalTracks":total_tracks,"IsLast":isLast,
                         "AlbumName":album
                         }
             df.append(track_dict)
 
     df= pd.DataFrame(df)
     data = {'AlbumName': [],
-            'ArtistNames': [],
             'IsLast': [],
             'TotalTracks': [],
             'TracksInAlbum': [],
@@ -58,9 +55,7 @@ def getDF(playlist_link):
         # select only the rows corresponding to the current album
         album_df = df[df['AlbumName'] == album_name]
 
-
-        # determine the artist names and total tracks for the album
-        artist_names = album_df['ArtistNames'].iloc[0]
+        # determine the total tracks for the album
         total_tracks = album_df['TotalTracks'].iloc[0]
 
         # determine if any of the tracks in the album are the last one
@@ -71,7 +66,6 @@ def getDF(playlist_link):
 
         # add the data for the current album to the dictionary
         data['AlbumName'].append(album_name)
-        data['ArtistNames'].append(artist_names)
         data['IsLast'].append(is_last)
         data['TotalTracks'].append(total_tracks)
         data['TracksInAlbum'].append(tracks_in_album)
@@ -96,7 +90,7 @@ def calculateProb(df,tracks_in_playlist):
     return f"The proportion of last tracks is {prop_last_tracks*100:.2f}% compared to the expected of {prob_last_tracks*100:.2f}%"
     
 
-    
+   
 
     
 
