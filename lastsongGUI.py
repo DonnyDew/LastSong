@@ -2,7 +2,19 @@ import tkinter as tk
 from tkinter import messagebox
 from functools import partial
 from PIL import Image, ImageTk
-from lastsong import process_playlist_link
+from lastsong import getDF,calculateProb
+
+def process_playlist_link(playlistlink):
+    try:
+        data = getDF(playlistlink)
+        df = data[0]
+        tracks_in_playlist = data[1]
+        result_str = str(calculateProb(df,tracks_in_playlist))
+        #print(result_str)
+        messagebox.showinfo("Result", result_str)
+    except Exception as e:
+        messagebox.showerror("Error", str(e))
+
 # Create the GUI
 root = tk.Tk()
 root.title("Playlist Processor")
@@ -28,3 +40,6 @@ playlist_link_entry.pack(pady=(5, 20))
 # Create the submit button
 submit_button = tk.Button(root, text="Process Playlist", command=lambda: process_playlist_link(playlist_link_var.get()),font=("Arial", 14),bg="#ff6961", fg="white")
 submit_button.pack()
+
+# Run the GUI
+root.mainloop()

@@ -3,10 +3,7 @@ import spotipy.util as util
 from spotipy.oauth2 import SpotifyClientCredentials
 import os
 import pandas as pd
-import tkinter as tk
-from tkinter import messagebox
-from functools import partial
-from PIL import Image, ImageTk
+
 
 def getDF(playlist_link):
     SPOTIPY_CLIENT_ID = str(os.environ.get('SPOTIPY_CLIENT_ID'))
@@ -108,16 +105,7 @@ def calculateProb(df,tracks_in_playlist):
     prob_last_tracks = (chanceLast * total_tracks_in_albums) / tracks_in_playlist
     return f"The proportion of last tracks is {prop_last_tracks*100:.2f}% compared to the expected of {prob_last_tracks*100:.2f}%"
     
-def process_playlist_link(playlistlink):
-    try:
-        data = getDF(playlistlink)
-        df = data[0]
-        tracks_in_playlist = data[1]
-        result_str = str(calculateProb(df,tracks_in_playlist))
-        #print(result_str)
-        messagebox.showinfo("Result", result_str)
-    except Exception as e:
-        messagebox.showerror("Error", str(e))
+
     
 
     
