@@ -1,19 +1,16 @@
 import tkinter as tk
-from tkinter import messagebox
-from functools import partial
 from PIL import Image, ImageTk
-from lastsong import getDF,calculateProb
+from lastsong import getDF, calculateProb
 
-def process_playlist_link(playlistlink):
+def process_playlist_link(playlistlink, result_label):
     try:
         data = getDF(playlistlink)
         df = data[0]
         tracks_in_playlist = data[1]
         result_str = str(calculateProb(df,tracks_in_playlist))
-        #print(result_str)
-        messagebox.showinfo("Result", result_str)
+        result_label.config(text=result_str)
     except Exception as e:
-        messagebox.showerror("Error", str(e))
+        result_label.config(text=str(e))
 
 # Create the GUI
 root = tk.Tk()
@@ -37,9 +34,14 @@ playlist_link_label.pack(pady=(20, 5))
 playlist_link_entry = tk.Entry(root, textvariable=playlist_link_var, width=40, font=("Arial", 12))
 playlist_link_entry.pack(pady=(5, 20))
 
-# Create the submit button
-submit_button = tk.Button(root, text="Process Playlist", command=lambda: process_playlist_link(playlist_link_var.get()),font=("Arial", 14),bg="#ff6961", fg="white")
+# Create the submit button and result label
+result_label = tk.Label(root, text="", font=("Arial", 10),bg='#1ED760')
+result_label.pack()
+submit_button = tk.Button(root, text="Process Playlist", font=("Arial", 14),bg="#ff6961", fg="white")
 submit_button.pack()
+
+# Bind the button to the lambda function that calls process_playlist_link with the current playlist_link_var and result_label values
+submit_button.config(command=lambda: process_playlist_link(playlist_link_var.get(), result_label))
 
 # Run the GUI
 root.mainloop()
