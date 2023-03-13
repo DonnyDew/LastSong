@@ -10,7 +10,7 @@ The following packages are required to run the script:
 
 ## How to use
 1. Obtain a Spotify playlist link
-2. Run the script and enter the playlist link in the GUI
+2. Run the GUI script and enter the playlist link in the GUI
 3. The script will display a message box showing the proportion of last tracks in the playlist compared to the expected proportion
 
 ## Explanation of the code
@@ -22,4 +22,8 @@ The GUI is created using the tkinter package, with a background image and header
 
 ## How it works
 The script uses the Spotify API via the `spotipy package` to obtain information about each track in the playlist. For each album, the proportion of "last tracks" (tracks that are the last on their respective albums) is calculated, and the expected proportion of last tracks in the playlist is determined based on the proportions of each album in the playlist. The actual proportion of last tracks in the playlist is then compared to the expected proportion, and the result is displayed in a message box.
+
+## Wrinkles accounted for
+The orginal version ran much faster but changes had to be made to have better accuracy. The Spotify album length variable tells
+how many within the disk so simply seeing if the track number is equal to the album length does not work for albums with disks. This requires a look up to be done so that the last song from the last disk counts as a last song. It was also required to use an offset and while loop in order to handle playlists over 100 songs.
 
