@@ -27,3 +27,6 @@ The script uses the Spotify API via the `spotipy package` to obtain information 
 The orginal version ran much faster but changes had to be made to have better accuracy. The Spotify album length variable tells
 how many within the disk so simply seeing if the track number is equal to the album length does not work for albums with disks. This requires a look up to be done so that the last song from the last disk counts as a last song. It was also required to use an offset and while loop in order to handle playlists over 100 songs.
 
+## Other Tools Used
+* ChatGPT
+
